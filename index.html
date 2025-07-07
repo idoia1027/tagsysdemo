@@ -1,0 +1,5023 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>游戏标签体系全景图 | 打标功能</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            padding: 25px 0;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            max-width: 800px;
+            margin: 0 auto 20px;
+            line-height: 1.6;
+        }
+        
+        .dimension-stats {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .stat-card {
+            background: rgba(26, 32, 44, 0.7);
+            border-radius: 12px;
+            padding: 15px 25px;
+            min-width: 200px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: bold;
+            background: linear-gradient(to right, #4cc9f0, #4361ee);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+        
+        .stat-label {
+            color: #a0aec0;
+            font-size: 1rem;
+        }
+        
+        .tagging-module {
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 85, 104, 0.5);
+            position: relative;
+        }
+        
+        .tagging-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .tagging-title {
+            font-size: 1.8rem;
+            color: #f472b6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .tagging-title i {
+            font-size: 1.8rem;
+        }
+        
+        .tagging-controls {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .tagging-input {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .tagging-input input {
+            flex: 1;
+            padding: 14px 20px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 85, 104, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        .tagging-input input:focus {
+            outline: none;
+            border-color: #4cc9f0;
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
+        }
+        
+        .tagging-btn {
+            background: linear-gradient(45deg, #4cc9f0, #4361ee);
+            color: white;
+            border: none;
+            padding: 0 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .tagging-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+        }
+        
+        .tagging-results {
+            display: none;
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+            border: 1px solid rgba(74, 85, 104, 0.6);
+        }
+        
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .result-title {
+            font-size: 1.5rem;
+            color: #4cc9f0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .result-dimensions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .result-dimension {
+            background: rgba(26, 32, 44, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dimension-name {
+            font-size: 1.2rem;
+            color: #f472b6;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dimension-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .result-tag {
+            background: rgba(76, 201, 240, 0.15);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #4cc9f0;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+            background: rgba(30, 41, 59, 0.8);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 85, 104, 0.5);
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 300px;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 50px;
+            border-radius: 50px;
+            border: none;
+            background: rgba(15, 23, 42, 0.6);
+            color: white;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 85, 104, 0.6);
+            transition: all 0.3s ease;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #4cc9f0;
+            box-shadow: 0 0 0 3px rgba(76, 201, 240, 0.3);
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 1.1rem;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(74, 85, 104, 0.6);
+            color: #cbd5e0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: linear-gradient(45deg, #4cc9f0, #4361ee);
+            border-color: transparent;
+            color: white;
+            box-shadow: 0 5px 15px rgba(76, 201, 240, 0.3);
+        }
+        
+        .filter-btn i {
+            font-size: 1rem;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 12px;
+        }
+        
+        .action-btn {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(74, 85, 104, 0.6);
+            color: #cbd5e0;
+            padding: 10px 20px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .action-btn:hover {
+            background: linear-gradient(45deg, #f72585, #b5179e);
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 5px 15px rgba(247, 37, 133, 0.3);
+        }
+        
+        .visualization {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        
+        .tree-container {
+            flex: 1;
+            background: rgba(30, 41, 59, 0.8);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            max-height: 65vh;
+            border: 1px solid rgba(74, 85, 104, 0.5);
+        }
+        
+        .tree {
+            position: relative;
+        }
+        
+        .dimension {
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(74, 85, 104, 0.5);
+        }
+        
+        .dimension:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .dimension-title {
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            color: #4cc9f0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .dimension-title i {
+            font-size: 1.6rem;
+        }
+        
+        .category {
+            margin-left: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .category-title {
+            font-size: 1.4rem;
+            margin-bottom: 18px;
+            color: #f472b6;
+            padding-left: 10px;
+            border-left: 3px solid #f472b6;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-title i {
+            font-size: 1.1rem;
+        }
+        
+        .tags {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 18px;
+            margin-left: 15px;
+        }
+        
+        .tag {
+            background: rgba(15, 23, 42, 0.7);
+            border-radius: 12px;
+            padding: 18px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: 1px solid rgba(74, 85, 104, 0.5);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .tag:hover {
+            transform: translateY(-5px);
+            background: rgba(30, 41, 59, 0.9);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            border-color: rgba(76, 201, 240, 0.5);
+        }
+        
+        .tag-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+            color: #f8fafc;
+        }
+        
+        .tag-desc {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            line-height: 1.5;
+        }
+        
+        .tag::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, #4cc9f0, #4361ee);
+        }
+        
+        .detail-panel {
+            width: 380px;
+            background: rgba(30, 41, 59, 0.9);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(74, 85, 104, 0.5);
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+        
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-title {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #4cc9f0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+        
+        .close-btn:hover {
+            color: #f472b6;
+        }
+        
+        .detail-content {
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        
+        .detail-label {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            margin-bottom: 8px;
+        }
+        
+        .detail-value {
+            font-size: 1.15rem;
+            font-weight: 500;
+            color: #f8fafc;
+        }
+        
+        .detail-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 12px;
+        }
+        
+        .detail-tag {
+            background: rgba(76, 201, 240, 0.15);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            color: #4cc9f0;
+            border: 1px solid rgba(76, 201, 240, 0.3);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: #4cc9f0;
+            opacity: 0.7;
+        }
+        
+        .empty-state h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+            color: #f8fafc;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #94a3b8;
+            font-size: 0.95rem;
+            border-top: 1px solid rgba(74, 85, 104, 0.5);
+        }
+        
+        @media (max-width: 1100px) {
+            .visualization {
+                flex-direction: column;
+            }
+            
+            .detail-panel {
+                width: 100%;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            
+            .tagging-input {
+                flex-direction: column;
+            }
+            
+            .tagging-btn {
+                padding: 14px;
+            }
+            
+            .tags {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+            
+            .dimension-title {
+                font-size: 1.6rem;
+            }
+            
+            .stat-card {
+                min-width: 150px;
+                padding: 12px 18px;
+            }
+            
+            .stat-value {
+                font-size: 1.8rem;
+            }
+        }
+        
+        /* 搜索建议样式 */
+        .suggestions-container {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.9);
+            border-radius: 10px;
+            margin-top: 5px;
+            z-index: 100;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
+        
+        .suggestion-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .suggestion-item:hover {
+            background: rgba(76, 201, 240, 0.2);
+        }
+        
+        .suggestion-item:not(:last-child) {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .suggestion-highlight {
+            color: #4cc9f0;
+            font-weight: 600;
+        }
+    </style>
+<script src="game_data_来自Excel完整版.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-tags"></i> 游戏标签体系全景图</h1>
+            <p class="subtitle">基于最新游戏标签字典构建的完整标签体系，涵盖游戏内容、用户画像、游戏动机和付费理解四大维度</p>
+            
+            <div class="dimension-stats">
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">核心维度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">18</div>
+                    <div class="stat-label">二级维度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">72</div>
+                    <div class="stat-label">一级标签</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">200+</div>
+                    <div class="stat-label">具体标签</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 游戏打标分析模块 -->
+        <div class="tagging-module">
+            <div class="tagging-header">
+                <h2 class="tagging-title"><i class="fas fa-tag"></i> 游戏打标分析</h2>
+                <div class="tagging-controls">
+                    <div class="action-btn" id="randomBtn">
+                        <i class="fas fa-random"></i> 随机游戏
+                    </div>
+                    <div class="action-btn" id="clearBtn">
+                        <i class="fas fa-trash-alt"></i> 清除结果
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tagging-input">
+                <input type="text" id="gameInput" placeholder="输入游戏名称，例如：光遇、蛋仔派对...">
+                <button class="tagging-btn" id="taggingBtn">开始打标分析</button>
+                <div class="suggestions-container" id="suggestionsContainer"></div>
+            </div>
+            
+            <div class="tagging-results" id="taggingResults">
+                <div class="result-header">
+                    <div class="result-title"><i class="fas fa-gamepad"></i> <span id="gameName">游戏名称</span> 标签分析结果</div>
+                    <div class="stat-label">分析时间: <span id="analysisTime">2025-06-27 14:30</span></div>
+                </div>
+                
+                <div class="result-dimensions">
+                    <div class="result-dimension">
+                        <div class="dimension-name">游戏内容理解</div>
+                        <div class="dimension-tags" id="contentTags">
+                            <div class="result-tag">加载中...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-dimension">
+                        <div class="dimension-name">用户画像标签</div>
+                        <div class="dimension-tags" id="userTags">
+                            <div class="result-tag">加载中...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-dimension">
+                        <div class="dimension-name">游戏动机</div>
+                        <div class="dimension-tags" id="motivationTags">
+                            <div class="result-tag">加载中...</div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-dimension">
+                        <div class="dimension-name">付费理解</div>
+                        <div class="dimension-tags" id="paymentTags">
+                            <div class="result-tag">加载中...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="搜索游戏标签...">
+            </div>
+            
+            <div class="filters">
+                <div class="filter-btn active" data-filter="all">
+                    <i class="fas fa-layer-group"></i> 全部
+                </div>
+                <div class="filter-btn" data-filter="content">
+                    <i class="fas fa-gamepad"></i> 游戏内容
+                </div>
+                <div class="filter-btn" data-filter="user">
+                    <i class="fas fa-user-friends"></i> 用户画像
+                </div>
+                <div class="filter-btn" data-filter="motivation">
+                    <i class="fas fa-brain"></i> 游戏动机
+                </div>
+                <div class="filter-btn" data-filter="payment">
+                    <i class="fas fa-money-bill-wave"></i> 付费理解
+                </div>
+            </div>
+            
+            <div class="actions">
+                <div class="action-btn" id="exportBtn">
+                    <i class="fas fa-file-pdf"></i> 导出PDF
+                </div>
+                <div class="action-btn" id="resetBtn">
+                    <i class="fas fa-sync-alt"></i> 重置视图
+                </div>
+            </div>
+        </div>
+        
+        <div class="visualization">
+            <div class="tree-container">
+   <!-- 添加全景图标题 -->
+                <div class="visualization-header">
+                    <h2><i class="fas fa-sitemap"></i> 游戏标签体系全景图</h2>
+                    <p>探索完整的游戏标签体系结构，包含四大核心维度及其子类别</p>
+                </div>
+
+                <div class="tree">
+                   <!-- 游戏内容理解 -->
+<div class="dimension" data-type="content">
+    <div class="dimension-title">
+        <i class="fas fa-gamepad"></i> 游戏内容理解
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-puzzle-piece"></i> 玩法机制</div>
+        <div class="tags">
+            <div class="tag" data-id="1">
+                <div class="tag-title">操作型玩法</div>
+                <div class="tag-desc">FPS, TPS, 动作ARPG, 即时战斗, 格斗, 跑酷</div>
+            </div>
+            <div class="tag" data-id="2">
+                <div class="tag-title">策略型玩法</div>
+                <div class="tag-desc">SLG, 自走棋, 塔防, 卡牌策略, 模拟经营</div>
+            </div>
+            <div class="tag" data-id="3">
+                <div class="tag-title">社交型玩法</div>
+                <div class="tag-desc">派对游戏, 狼人杀, 多人乱斗, UGC创造, 语音社交</div>
+            </div>
+            <div class="tag" data-id="4">
+                <div class="tag-title">成长型玩法</div>
+                <div class="tag-desc">RPG养成, 回合制战斗, 装备系统, 角色升级</div>
+            </div>
+            <div class="tag" data-id="5">
+                <div class="tag-title">轻度玩法</div>
+                <div class="tag-desc">小游戏合集, 钓鱼, 球类模拟, 快节奏反应, 点击放置</div>
+            </div>
+            <div class="tag" data-id="6">
+                <div class="tag-title">博彩型玩法</div>
+                <div class="tag-desc">棋牌类, 捕鱼类</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-globe-asia"></i> 题材世界观</div>
+        <div class="tags">
+            <div class="tag" data-id="7">
+                <div class="tag-title">现实/写实向</div>
+                <div class="tag-desc">枪战军事, 现代都市, 谍战, 竞技体育</div>
+            </div>
+            <div class="tag" data-id="8">
+                <div class="tag-title">幻想/奇幻向</div>
+                <div class="tag-desc">西方魔幻, 奇幻冒险, 科幻</div>
+            </div>
+            <div class="tag" data-id="9">
+                <div class="tag-title">东方文化向</div>
+                <div class="tag-desc">仙侠, 国风, 武侠, 神话, 玄幻</div>
+            </div>
+            <div class="tag" data-id="10">
+                <div class="tag-title">ACG向</div>
+                <div class="tag-desc">动漫IP, 二次元, 忍者, 奥特曼, 龙珠, 舰娘</div>
+            </div>
+            <div class="tag" data-id="11">
+                <div class="tag-title">其他向</div>
+                <div class="tag-desc">僵尸, 末日, 生存, 脑洞恶搞, 奇异生物, 历史三国</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-fist-raised"></i> 战斗模式</div>
+        <div class="tags">
+            <div class="tag" data-id="12">
+                <div class="tag-title">PVP（对人）</div>
+                <div class="tag-desc">组队竞技, 单挑对抗, 大逃杀, 跨服战</div>
+            </div>
+            <div class="tag" data-id="13">
+                <div class="tag-title">PVE（对环境）</div>
+                <div class="tag-desc">剧情副本, 刷图打怪, BOSS挑战, 副本推图</div>
+            </div>
+            <div class="tag" data-id="14">
+                <div class="tag-title">非对抗型</div>
+                <div class="tag-desc">跑酷, 经营, 建造, 装扮, 模拟</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-tachometer-alt"></i> 节奏强度</div>
+        <div class="tags">
+            <div class="tag" data-id="15">
+                <div class="tag-title">重度游戏</div>
+                <div class="tag-desc">重度, 中重度</div>
+            </div>
+            <div class="tag" data-id="16">
+                <div class="tag-title">中度游戏</div>
+                <div class="tag-desc">中度</div>
+            </div>
+            <div class="tag" data-id="17">
+                <div class="tag-title">轻度游戏</div>
+                <div class="tag-desc">轻度, 快节奏, 碎片化, 随玩随停, 挂机, 放置</div>
+            </div>
+        </div>
+    </div>
+</div>
+                    
+                    <!-- 用户画像标签 -->
+                    <div class="dimension" data-type="user">
+    <div class="dimension-title">
+        <i class="fas fa-user-friends"></i> 用户画像标签
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-venus-mars"></i> 性别偏好</div>
+        <div class="tags">
+            <div class="tag" data-id="18">
+                <div class="tag-title">男性为主</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="19">
+                <div class="tag-title">女性为主</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="20">
+                <div class="tag-title">男女均衡</div>
+                <div class="tag-desc"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-user-clock"></i> 年龄段分布</div>
+        <div class="tags">
+            <div class="tag" data-id="21">
+                <div class="tag-title">8岁以下</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="22">
+                <div class="tag-title">8-12岁</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="23">
+                <div class="tag-title">13-17岁</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="24">
+                <div class="tag-title">18-24岁</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="25">
+                <div class="tag-title">25-34岁</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="26">
+                <div class="tag-title">35-44岁</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="27">
+                <div class="tag-title">45岁以上</div>
+                <div class="tag-desc"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-coins"></i> 付费习惯类</div>
+        <div class="tags">
+            <div class="tag" data-id="28">
+                <div class="tag-title">零氪</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="29">
+                <div class="tag-title">微氪</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="30">
+                <div class="tag-title">中氪</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="31">
+                <div class="tag-title">重氪</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="32">
+                <div class="tag-title">白嫖党</div>
+                <div class="tag-desc"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-gamepad"></i> 玩法偏好类</div>
+        <div class="tags">
+            <div class="tag" data-id="33">
+                <div class="tag-title">PVP竞技党</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="34">
+                <div class="tag-title">PVE副本控</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="35">
+                <div class="tag-title">剧情党</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="36">
+                <div class="tag-title">收集控</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="37">
+                <div class="tag-title">挂机党</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="38">
+                <div class="tag-title">社交型玩家</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="39">
+                <div class="tag-title">休闲娱乐型</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="40">
+                <div class="tag-title">肝帝</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="41">
+                <div class="tag-title">萌新</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="42">
+                <div class="tag-title">轻度玩家</div>
+                <div class="tag-desc"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-heart"></i> 兴趣/文化类</div>
+        <div class="tags">
+            <div class="tag" data-id="43">
+                <div class="tag-title">二次元</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="44">
+                <div class="tag-title">ACG爱好者</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="45">
+                <div class="tag-title">历史控</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="46">
+                <div class="tag-title">国风文化</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="47">
+                <div class="tag-title">IP粉丝</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="48">
+                <div class="tag-title">军事迷</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="49">
+                <div class="tag-title">建造狂</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="50">
+                <div class="tag-title">策略控</div>
+                <div class="tag-desc"></div>
+            </div>
+            <div class="tag" data-id="51">
+                <div class="tag-title">情怀驱动型</div>
+                <div class="tag-desc"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- 游戏动机理解 -->
+                    <div class="dimension" data-type="motivation">
+    <div class="dimension-title">
+        <i class="fas fa-brain"></i> 动机理解
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-gamepad"></i> 游戏参与动机</div>
+        <div class="tags">
+            <div class="tag" data-id="52">
+                <div class="tag-title">情感关系</div>
+                <div class="tag-desc">情感连接 / 陪伴寄托 / 恋爱幻想</div>
+            </div>
+            <div class="tag" data-id="53">
+                <div class="tag-title">自我认同</div>
+                <div class="tag-desc">自我代入 / 角色投射 / 成就体现</div>
+            </div>
+            <div class="tag" data-id="54">
+                <div class="tag-title">探索认知</div>
+                <div class="tag-desc">世界探索 / 剧情追踪 / 解谜沉浸</div>
+            </div>
+            <div class="tag" data-id="55">
+                <div class="tag-title">对抗竞技</div>
+                <div class="tag-desc">技巧挑战 / 胜负欲 / 非对称对抗</div>
+            </div>
+            <div class="tag" data-id="56">
+                <div class="tag-title">角色代偿</div>
+                <div class="tag-desc">扮演不同身份 / 非我体验</div>
+            </div>
+            <div class="tag" data-id="57">
+                <div class="tag-title">社交互动</div>
+                <div class="tag-desc">实时互动 / 群体合作 / 社交关系</div>
+            </div>
+            <div class="tag" data-id="58">
+                <div class="tag-title">爽感刺激</div>
+                <div class="tag-desc">爆发反馈 / 快节奏操作 / 强回报</div>
+            </div>
+            <div class="tag" data-id="59">
+                <div class="tag-title">解压逃避</div>
+                <div class="tag-desc">日常治愈 / 碎片时间 / 节奏可控</div>
+            </div>
+            <div class="tag" data-id="60">
+                <div class="tag-title">收集成长</div>
+                <div class="tag-desc">资源积累 / 图鉴收集 / 养成系统</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-money-bill"></i> 付费动机</div>
+        <div class="tags">
+            <div class="tag" data-id="61">
+                <div class="tag-title">随机刺激</div>
+                <div class="tag-desc">抽卡 / 宝箱 / 掉落 / 盲盒</div>
+            </div>
+            <div class="tag" data-id="62">
+                <div class="tag-title">进度与掌控</div>
+                <div class="tag-desc">跳过等待 / 自动托管 / 一键完成</div>
+            </div>
+            <div class="tag" data-id="63">
+                <div class="tag-title">数值与强度</div>
+                <div class="tag-desc">战力提升 / 强化突破 / 装备升级</div>
+            </div>
+            <div class="tag" data-id="64">
+                <div class="tag-title">稀缺与限定</div>
+                <div class="tag-desc">限时皮肤 / 限抽卡池 / 绝版称号</div>
+            </div>
+            <div class="tag" data-id="65">
+                <div class="tag-title">收集与养成</div>
+                <div class="tag-desc">图鉴收齐 / 满养成 / 角色全收</div>
+            </div>
+            <div class="tag" data-id="66">
+                <div class="tag-title">审美与表达</div>
+                <div class="tag-desc">外观皮肤 / 时装 / 家园装饰</div>
+            </div>
+            <div class="tag" data-id="67">
+                <div class="tag-title">情感投入</div>
+                <div class="tag-desc">解锁角色剧情 / 应援 / 互动语音</div>
+            </div>
+            <div class="tag" data-id="68">
+                <div class="tag-title">社交炫耀</div>
+                <div class="tag-desc">称号排行 / 群内炫耀 / 礼物赠送</div>
+            </div>
+            <div class="tag" data-id="69">
+                <div class="tag-title">安全保底</div>
+                <div class="tag-desc">保底机制 / 定向抽 / 必中券</div>
+            </div>
+            <div class="tag" data-id="70">
+                <div class="tag-title">长线性价比</div>
+                <div class="tag-desc">月卡 / 基金 / 每日特惠</div>
+            </div>
+        </div>
+    </div>
+</div>
+                    
+                    <!-- 付费理解 -->
+                   <div class="dimension" data-type="payment">
+    <div class="dimension-title">
+        <i class="fas fa-money-bill-wave"></i> 付费理解
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-sitemap"></i> 付费结构复杂度</div>
+        <div class="tags">
+            <div class="tag" data-id="71">
+                <div class="tag-title">低(≤3个主付费点)</div>
+                <div class="tag-desc">付费点较少，结构简单清晰</div>
+            </div>
+            <div class="tag" data-id="72">
+                <div class="tag-title">中(4-6个主付费点)</div>
+                <div class="tag-desc">中等数量付费点，结构平衡</div>
+            </div>
+            <div class="tag" data-id="73">
+                <div class="tag-title">高(≥7个主付费点)</div>
+                <div class="tag-desc">多个付费系统，结构复杂</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="category">
+        <div class="category-title"><i class="fas fa-cash-register"></i> 付费模式</div>
+        <div class="tags">
+            <div class="tag" data-id="74">
+                <div class="tag-title">角色养成付费</div>
+                <div class="tag-desc">抽卡/招募角色, 升级材料/经验药水, 技能解锁与强化, 转职觉醒系统, 角色突破/升星</div>
+            </div>
+            <div class="tag" data-id="75">
+                <div class="tag-title">装备系统付费</div>
+                <div class="tag-desc">抽装备/锻造, 强化/升星/洗练, 附魔/铭刻, 打造随机词条</div>
+            </div>
+            <div class="tag" data-id="76">
+                <div class="tag-title">外观类付费</div>
+                <div class="tag-desc">皮肤/时装/挂件, 坐骑/宠物外形, 头像框/称号装饰</div>
+            </div>
+            <div class="tag" data-id="77">
+                <div class="tag-title">战斗资源付费</div>
+                <div class="tag-desc">体力/活力购买, 复活币/扫荡券, 战斗增益道具</div>
+            </div>
+            <div class="tag" data-id="78">
+                <div class="tag-title">抽卡/转盘付费</div>
+                <div class="tag-desc">常规抽卡/转盘, 限定卡池/活动抽卡, 氪金角色/神器</div>
+            </div>
+            <div class="tag" data-id="79">
+                <div class="tag-title">成长加速付费</div>
+                <div class="tag-desc">月卡/周卡, 成长基金, 经验/金币加成</div>
+            </div>
+            <div class="tag" data-id="80">
+                <div class="tag-title">PVP增益付费</div>
+                <div class="tag-desc">竞技增益道具, VIP段位加成</div>
+            </div>
+            <div class="tag" data-id="81">
+                <div class="tag-title">通行证体系</div>
+                <div class="tag-desc">赛季通行证, 通行证专属奖励</div>
+            </div>
+            <div class="tag" data-id="82">
+                <div class="tag-title">其他系统付费</div>
+                <div class="tag-desc">仓库/背包扩展, 挂机离线收益加倍, 社交/名字/改名卡</div>
+            </div>
+        </div>
+    </div>
+</div>
+                        
+                        <div class="category">
+                            <div class="category-title"><i class="fas fa-cash-register"></i> 付费模式</div>
+                            <div class="tags">
+                                <div class="tag" data-id="110">
+                                    <div class="tag-title">概率付费</div>
+                                    <div class="tag-desc">抽卡、转盘等随机机制</div>
+                                </div>
+                                <div class="tag" data-id="111">
+                                    <div class="tag-title">数值碾压</div>
+                                    <div class="tag-desc">付费获得数值优势</div>
+                                </div>
+                                <div class="tag" data-id="112">
+                                    <div class="tag-title">内容解锁</div>
+                                    <div class="tag-desc">付费解锁特定内容</div>
+                                </div>
+                                <div class="tag" data-id="113">
+                                    <div class="tag-title">订阅制</div>
+                                    <div class="tag-desc">定期付费获取权益</div>
+                                </div>
+                                <div class="tag" data-id="114">
+                                    <div class="tag-title">混合型</div>
+                                    <div class="tag-desc">多种付费模式组合</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-panel">
+                <div class="detail-header">
+                    <div class="detail-title">标签详情</div>
+                    <button class="close-btn">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="empty-state">
+                    <i class="fas fa-info-circle"></i>
+                    <h3>选择标签查看详情</h3>
+                    <p>点击左侧标签卡片查看详细信息和相关标签</p>
+                </div>
+                
+                <div class="detail-content" style="display: none;">
+                    <div class="detail-item">
+                        <div class="detail-label">标签名称</div>
+                        <div class="detail-value" id="tag-name">操作型玩法</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">所属维度</div>
+                        <div class="detail-value" id="tag-dimension">游戏内容理解 > 玩法机制</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">标签描述</div>
+                        <div class="detail-value" id="tag-description">强调玩家操作技巧和反应速度的游戏玩法类型</div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">包含子标签</div>
+                        <div class="detail-tags" id="sub-tags">
+                            <div class="detail-tag">FPS</div>
+                            <div class="detail-tag">TPS</div>
+                            <div class="detail-tag">动作ARPG</div>
+                            <div class="detail-tag">即时战斗</div>
+                            <div class="detail-tag">格斗</div>
+                            <div class="detail-tag">跑酷</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-label">相关标签</div>
+                        <div class="detail-tags" id="related-tags">
+                            <div class="detail-tag">PVP竞技党</div>
+                            <div class="detail-tag">强对抗偏好</div>
+                            <div class="detail-tag">实力证明欲</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <p>游戏标签体系全景图 | 基于最新游戏标签字典构建 | © 2025 wyx</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 解析Excel数据 - 完整200款游戏数据
+     const gameData = 
+          [
+  {
+    "name": "捕鱼大作战-畅爽爆金",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>25-34岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒极理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "蛋仔派对",
+    "标签": {
+      "玩法机制": "社交型玩法>派对游戏",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "兴趣/文化类>社交型玩家"],
+      "游戏动机": ["社交互动>群体合作", "创造驱动>UGC创造"],
+      "付费模式": "内容解锁+订阅制",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;创造驱动>UGC创造（未映射） | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "第五人格-约定的梦幻岛联动",
+    "标签": {
+      "玩法机制": "操作型玩法>即时战斗",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>中重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "探索认知>解谜沉浸"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "途游休闲捕鱼-双倍渔场",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>限定卡池;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "鱼乐达人-高倍3D捕鱼",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>25-34岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "捕鱼大咖-捕鱼大师",
+    "极签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "光·遇",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>社交",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>13-17岁", "兴趣/文化类>治愈放松型"],
+      "游戏动机": ["情感关系>陪伴寄托", "探索认知>世界探索"],
+      "付费模式": "内容解锁+订阅制",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "三国杀",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>胜负欲", "收集成长>图鉴收集"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;角色养成付费>角色突破/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "恋与深空",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "幻想/奇幻向>科幻",
+      "战斗模式": "非对抗型>社交",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+      "游戏动机": ["情感关系>恋爱幻想", "收集成长>角色全收"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;收集成长>角色全收（未映射） | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "三国：谋定天下-周年盛典",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>胜负欲", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "明日之后",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "其他向>末日",
+      "战斗模式": "PVP（对人）>组队竞技;PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>生存控"],
+      "游戏动机": ["收集成长>资源积累", "探索认知>生存探索"],
+      "付费模式": "混合型（概率+数值）",
+      "付费点类型": "装备系统付费>打造随机词条;成长加速付费>月卡/周卡",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "途游斗地主（比赛版）",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>胜负极", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "萤火突击-SS5全新赛季",
+    "标签": {
+      "玩法机制": "操作型玩法>FPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>大逃杀",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "迷你世界-多人对抗大战场",
+    "标签": {
+      "玩法机制": "社交型玩法>UGC创造",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "非对抗型>建造",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-12岁", "兴趣/文化类>建造狂"],
+      "游戏动机": ["创造驱动>UGC编辑器使用者", "社交互动>实时互动"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;其他系统付费>背包扩展",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;个性表达",
+      "说明": "创造驱动>UGC编辑器使用者（未映射）;社交反馈、群体归属、被接纳感 | 审美享受 / 个性表达 / 外观社交认同;个性表达（未映射）"
+    }
+  },
+  {
+    "name": "率土之滨",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-34岁", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>胜负欲", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "梦幻西游-全民争霸赛",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVE副本控"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>技能解锁与强化;抽卡/转盘付费>氪金角色",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "倩女幽魂",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["情感关系>情感连接", "探索认知>剧情追踪"],
+      "付费模式": "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "我的世界：移动版",
+    "标签": {
+      "玩法机制": "社交型玩法>UGC创造",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>建造",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "兴趣/文化类>建造狂", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>沙盒建造型", "探索认知>世界探索"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;其他系统付费>背包扩展",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;个性表达",
+      "说明": "创造驱动>沙盒建造型（未映射）;好奇心满足、理解世界、建构秩序感 | 审美享受 / 个性表达 / 外观社交认同;个性表达（未映射）"
+    }
+  },
+  {
+    "name": "多乐够级-原汁原味经典够级",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["社交互动>好友组队", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "战斗资源付费>复活币;抽卡/转盘付费>常规抽卡/转盘",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "社交反馈、群体归属、被接纳感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "逆水寒",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["情感关系>情感连接", "探索认知>剧情追踪"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "角色养成付费>角色突破/升星;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "乐乐捕鱼-全新玩法",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "英勇之地-《铠甲勇士》联动",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>13-17岁", "兴趣/文化类>IP粉丝", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;抽卡/转盘付费>氪金神器",
+      "付费结构复杂度": "中",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "问道",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>升级材料/经验药水;抽卡/转盘付费>限定卡池",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;收集与养成",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "迷你枪战精英",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>多人乱斗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["对抗竞技>多人乱斗", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "展现能力、支配局势、击败他人快感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "实况足球-为下一球",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>球员卡包;装备系统付费>球员强化",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "斗罗大陆：魂师对决-送SP尘心",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+      "付费模式": "概率付费",
+      "付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "新仙魔九界-波克出品",
+    "标签": {
+      "玩法机制": "成长型玩法>点击放置",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "非对抗型>放置",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "付费习惯类>月卡党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>挂机离线收益加倍",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "神火大陆-新职业魔裔修仙侠魔游",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "永劫无间-武侠摸金",
+    "标签": {
+      "玩法机制": "操作型玩法>格斗",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>单挑胜负", "自我认同>成就体现"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;装备系统付费>附魔/铭刻",
+      "付费结构复杂度": "高",
+      "核心付费动机": "审美与表达;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "捕鱼炸翻天-修仙捕鱼",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "时光杂货店-送终生权益卡",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "巅峰极速-2周年生日会",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>车辆零件;装备系统付费>车辆强化",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "不良人：破局-第七季正版送千抽",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;情感投入",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;情感寄托 / 陪伴感 / 角色情绪投射"
+    }
+  },
+  {
+    "name": "指尖四川麻将",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "三国杀：一将成名-预约创玩节送武将！",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>单挑胜负", "收集成长>卡牌收集"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;角色养成付费>角色突破/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "奥特曼传奇英雄2-超级芝顿降临",
+    "标签": {
+      "玩法机制": "操作型玩法>格斗",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>BOSS挑战",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>8-12岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>角色收集", "对抗竞技>非对称对抗"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>抽卡/招募角色;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "王牌竞速",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>微氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>车辆零件;装备系统付费>车辆强化",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "大话西游-616盛夏狂欢季开启",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>升级材料/经验药水;抽卡/转盘付费>限定卡池",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "植物大战僵尸2-巅峰之战",
+    "标签": {
+      "玩法机制": "策略型玩法>塔防",
+      "题材世界观": "其他向>奇异生物",
+      "战斗模式": "PVE（对环境）>塔防",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["收集成长>图鉴收集", "探索认知>解谜沉浸"],
+      "付费模式": "概率付费+订阅制",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;长线性价比",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;成本优化 / 长期投资意识 / 稳健回报感"
+    }
+  },
+  {
+    "name": "三国：冰河时代-解压建造",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "非对抗型>建造",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>建造", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>背包扩展",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>建造（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "凡人修仙传：人界篇-斗破联动",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "梦幻花园-泳池派对",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "忍者必须死3",
+    "标签": {
+      "玩法机制": "操作型玩法>跑酷",
+      "题材世界观": "东方文化向>忍者",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>13-24岁", "兴趣/文化类>ACG爱好者", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "展现能力、支配局势、击败他人快感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "姚记捕鱼-全民捕鱼大作战",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "龙族：卡塞尔之门-正版龙族",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;情感投入",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;情感寄托 / 陪伴感 / 角色情绪投射"
+    }
+  },
+  {
+    "name": "捕鱼大世界-登录领亿万金币",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>限定卡池;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "逃跑吧！少年-新赛季",
+    "标签": {
+      "玩法机制": "操作型玩法>即时战斗",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>多人乱斗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["对抗竞技>多人乱斗", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "展现能力、支配局势、击败他人快感;多巴胺奖励、极感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "仙逆H5-正版授权",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "概率付费+订阅制",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+      "付费结构复杂度": "中",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "闪烁之光-送5000抽",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+      "付费模式": "概率付费",
+      "付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "龙魂旅人",
+    "标签": {
+      "玩法机制": "成长型玩法>点击放置",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "非对抗型>放置",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-34岁", "付费习惯类>月卡党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>挂机离线收益加倍",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "奥特曼传奇英雄-阿斯加隆降临",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>BOSS挑战",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>8-12岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>角色收集", "对抗竞技>非对称对抗"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>抽卡/招募角色;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "猫和老鼠",
+    "标签": {
+      "玩法机制": "社交型玩法>多人乱斗",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVP（对人）>多人乱斗",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-12岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["社交互动>多人乱斗", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "原始传奇-五周年",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>玄幻",
+      "战斗模式": "PVE（对环境）>刷图打怪",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "九灵神域-新职业魔裔修仙侠魔游",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "机甲战队-6V6战术机甲战斗",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "幻想/奇幻向>科幻",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "太空杀-首届嘉年华",
+    "标签": {
+      "玩法机制": "社交型玩法>狼人杀",
+      "题材世界观": "幻想/奇幻向>科幻",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>社交型玩家"],
+      "游戏动机": ["社交互动>狼人杀", "探索认知>解谜沉浸"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;好奇心满足、理解世界、建构秩序感 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "美职篮巅峰对决-NBA正版授权",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>球员卡包;装备系统付费>球员强化",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "元气骑士-屠龙宝刀点击就送",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVE（对环境）>刷图打怪",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["收集成长>装备收集", "探索认知>世界探索"],
+      "付费模式": "概率付费",
+      "付费点类型": "装备系统付费>强化/升星;抽卡/转盘付费>氪金神器",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;探索认知",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;好奇心满足（未映射）"
+    }
+  },
+  {
+    "name": "《攻城掠地》手机游戏软件（移动）",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "坦克世界闪击战",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "奥比岛：梦想国度",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>8-17岁", "兴趣/文化类>社交型玩家"],
+      "游戏动机": ["社交互动>情感陪伴型", "创造驱动>装扮"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;创造驱动>装扮（未映射） | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "阴阳师-时曜泷夜叉姬降临",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>二次元",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;情感投入",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;情感寄托 / 陪伴感 / 角色情绪投射"
+    }
+  },
+  {
+    "name": "途游捕鱼",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>限定卡池;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "捕鱼新纪元-超好玩",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "贪吃蛇大作战",
+    "标签": {
+      "玩法机制": "社交型玩法>多人乱斗",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>多人乱斗",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["社交互动>多人乱斗", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "荒野行动",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>大逃杀",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "收集成长>装备收集"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "王牌战争-王牌对决",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>大逃杀",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "闪耀暖暖",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>装扮",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>13-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>皮肤解锁", "创造驱动>捏脸与装扮控"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;角色养成付费>抽卡/招募角色",
+      "付费结构复杂度": "高",
+      "核心付费动机": "审美与表达;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;创造驱动>捏脸与装扮控（未映射） | 审美享受 / 个性表达 / 外观社交认同;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "球球大作战-霸屏挑战",
+    "标签": {
+      "玩法机制": "社交型玩法>多人乱斗",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>多人乱斗",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["社交互动>多人乱斗", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "猎鱼达人-经典街机捕鱼",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "七日世界",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "其他极>末日",
+      "战斗模式": "PVP（对人）>组队竞技;PVE（对环境）>生存探索",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>生存控"],
+      "游戏动机": ["收集成长>资源积累", "探索认知>生存探索"],
+      "付费模式": "混合型（概率+数值）",
+      "付费点类型": "装备系统付费>打造随机词条;成长加速付费>月卡/极卡",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "时空中的绘旅人",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "ACG向>二次元",
+      "战斗模式": "非对抗型>剧情",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+      "游戏动机": ["情感关系>恋爱幻想", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "奥奇传说-灵绽彼岸",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+      "付费模式": "概率付费",
+      "付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀极"
+    }
+  },
+  {
+    "name": "富豪麻将",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "球球英雄-三分钟一局",
+    "标签": {
+      "玩法机制": "策略型玩法>塔防",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["对抗竞技>PVP竞技偏好", "爽感刺激>快节奏反应"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "展现能力、支配局势、击败他人快感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "航海王热血航线",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>角色收集", "对抗竞技>非对称对抗"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>抽卡/招募角色;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "葫芦娃",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>情怀驱动型"],
+      "游戏动机": ["收集成长>卡牌收集", "沉浸驱动>情怀型玩家"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "中",
+      "核心付费动机": "情怀驱动;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "烟雨江湖-新地图",
+    "标签": {
+      "玩法机制": "操作型玩法>即时战斗",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "中",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "欢乐钓鱼大师-全新玩法游钓传奇上线",
+    "标签": {
+      "玩法机制": "轻度玩法>钓鱼",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "非对抗型>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>25-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["解压逃避>日常治愈", "探索认知>世界探索"],
+      "付费模式": "内容解锁",
+      "付费点类型": "装备系统付费>升级渔线与鱼钩;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "低",
+      "核心付费动机": "探索认知;解压逃避",
+      "说明": "情绪疏导、逃避现实、缓解压力;好奇心满足、理解世界、建构秩序感 | 好奇心满足（未映射）;情绪疏导、逃避现实、缓解压力"
+    }
+  },
+  {
+    "name": "巨兽战场-猛兽新世界",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "幻想/奇幻向>奇异生物",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "以闪亮之名",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "非对抗型>装扮",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["创造驱动>捏脸与装扮控", "社交驱动>表现展示欲"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "高",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "创造驱动>捏脸与装扮控（未映射）;社交驱动>表现展示欲（未映射） | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "地铁跑酷-共赴童梦奇旅",
+    "标签": {
+      "玩法机制": "操作型玩法>跑酷",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "非对抗型>跑酷",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["爽感刺激>快节奏操作", "时间驱动>碎片化"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;时间驱动>碎片化（未映射） | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "梦想桃源-送万抽梦幻回合修仙侠",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>升级材料/经验药水;抽卡/转盘付费>限定卡池",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "欢喜斗地主-哪吒邀你斗过瘾",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "东方文化向>神话",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "踏风行-躺平修仙",
+    "标签": {
+      "玩法机制": "成长型玩法>点击放置",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "非对抗型>放置",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "付费习惯类>月卡党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>挂机离线收益加倍",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "这城有良田-种田经营",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "东方文化向>国风",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "战双帕弥什-幻寂鸣泣曲",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "幻想/奇幻向>科幻",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "潮汐守望者-剧毒之潮",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "概率付费+订阅制",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+      "付费结构复杂度": "中",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "剑仙轩辕志-0氪仙侠修仙手游",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "vivo小游戏-原秒玩小游戏",
+    "标签": {
+      "玩法机制": "轻度玩法>小游戏合集",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "非对抗型>小游戏",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>全年龄段", "玩法偏好类>碎片化玩家"],
+      "游戏动机": ["解压逃避>碎片时间", "心理反馈>探索好奇驱动"],
+      "付费模式": "订阅制",
+      "付费点类型": "广告变现;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;心理反馈>探索好奇驱动（未映射） | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "多乐升级-双升拖拉机八十分",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["社交互动>好友组队", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "战斗资源付费>复活币;抽卡/转盘付费>常规抽卡/转盘",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "社交反馈、群体归属、被接纳感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "最佳球会-2025",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>球员卡包;装备系统付费>球员强化",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "掼蛋-比赛版",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "斗罗大陆-周年狂欢季",
+    "标签": {
+      "玩法机制": "成长型玩法>点击放置",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "非对抗型>放置",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>挂机党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>挂机离线收益加倍",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "决战！平安京",
+    "标签": {
+      "玩法机制": "操作型玩法>即时战斗",
+      "题材世界观": "ACG向>二次元",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;装备系统付费>附魔/铭刻",
+      "付费结构复杂度": "高",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "极明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "极品芝麻官-周年庆开启",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>历史官场",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段极布>25-44岁", "玩法偏好类>情怀驱动型"],
+      "游戏动机": ["收集成长>角色收集", "沉浸驱动>情怀型玩家"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>称号装饰",
+      "付费结构复杂度": "中",
+      "核心付费动机": "情怀驱动;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "王者征途-嘉年华盛典",
+    "标签": {
+      "玩法机制": "成长型玩法>点击放置",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "非对抗型>放置",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "付费习惯类>月卡党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>挂机离线收益加倍",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "巅峰战舰",
+    "标签": {
+      "玩法机制": "操作型玩法>TPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "碧蓝航线",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>二次元",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;情感投入",
+      "说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;情感寄托 / 陪伴感 / 角色情绪投射"
+    }
+  },
+  {
+    "name": "青云诀2-夏促活动限时上线",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "三国战纪：风云再起",
+    "标签": {
+      "玩法机制": "操作型玩法>格斗",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>情怀驱动型"],
+      "游戏动机": ["对抗竞技>单挑胜负", "沉浸驱动>情怀型玩家"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "情怀驱动;实力证明欲",
+      "说明": "展现能力、支配局势、击败他人快感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;实力证明欲（未映射）"
+    }
+  },
+  {
+    "name": "帝国征服者",
+    "标签": {
+      "玩法机制": "策略型玩法>SLG",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "超凡先锋-二周年狂欢",
+    "标签": {
+      "玩法机制": "操作型玩法>FPS",
+      "题材世界观": "现实/写实向>枪战军事",
+      "战斗模式": "PVP（对人）>大逃杀",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>技巧挑战", "收集成长>装备收集"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑极;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "创造与魔法-铠甲勇士二次联动",
+    "标签": {
+      "玩法机制": "社交型玩法>UGC创造",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>建造",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "兴趣/文化类>建造狂", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>沙盒建造型", "社交互动>联机协作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;其他系统付费>背包扩展",
+      "付费结构复杂度": "低",
+      "核心付费动机": "审美与表达;个性表达",
+      "说明": "创造驱动>沙盒建造型（未映射）;社交反馈、群体归属、被接纳感 | 审美享受 / 个性表达 / 外观社交认同;个性表达（极映射）"
+    }
+  },
+  {
+    "name": "命运圣契-300抽开局送LP",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+      "付费模式": "概率付费",
+      "付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "九天诛魔-国风仙侠修仙手游",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "永夜降临：复苏-送龙皓晨",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>二次元", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+      "付费模式": "概率付费",
+      "付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "台球世界-桌球斯诺克",
+    "标签": {
+      "玩法机制": "轻度玩法>球类模拟",
+      "题材世界观": "现实/写实向>竞技体育",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "兴趣/文化类>体育迷"],
+      "游戏动机": ["对抗竞技>单挑胜负", "自我认同>成就体现"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;成长加速付费>经验/金币加成",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交支配",
+      "说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;社交支配（未映射）"
+    }
+  },
+  {
+    "name": "龙之谷世界-全新职业学者来袭",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "最强祖师",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>背包扩展",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "天姬变-送100连抽",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>国风文化", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>角色收集", "沉浸驱动>代入感强"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;沉浸驱动>代入感强（未映射） | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "浮生忆玲珑",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>国风",
+      "战斗模式": "非对抗型>剧情",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["情感关系>恋爱幻想", "探索认知>剧情追踪"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "宾果消消消",
+    "标签": {
+      "玩法机制": "轻度玩法>点击放置",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "非对抗型>消除",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["解压逃避>碎片时间", "心理反馈>情绪调节驱动"],
+      "付费模式": "订阅制",
+      "付费点类型": "广告变现;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;解压逃避",
+      "说明": "情绪疏导、逃避现实、缓解压力;心理反馈>情绪调节驱动（未映射） | 成本优化 / 长期投资意识 / 稳健回报感;情绪疏导、逃避现实、缓解压力"
+    }
+  },
+  {
+    "name": "崩坏3-时墟回光",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "ACG向>二次元",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;收集与养成",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "商道高手-城市模拟",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐极"],
+      "游戏动机": ["创造驱动>模拟", "心理反馈>成就感驱动"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;心理反馈>成就感驱动（未映射） | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "一梦江湖-平行服上线",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "诛仙-广西联动",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>仙侠/国风",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+      "游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+      "付费模式": "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情感投入;审美与表达",
+      "说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+    }
+  },
+  {
+    "name": "开运麻将",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "轻度游戏>碎片化",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+      "游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+      "付费结构复杂度": "低",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "捕鱼大作战-新赛季",
+    "标签": {
+      "玩法机制": "博彩型玩法>捕鱼类",
+      "题材世界观": "",
+      "战斗模式": "PVE（对环境）>模拟",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+      "游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "抽卡/转盘付费>限定卡池;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "随机刺激;爽感刺激",
+      "说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+    }
+  },
+  {
+    "name": "剑侠情缘·零",
+    "标签": {
+      "玩法机制": "成长型玩法>回合制战斗",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVP（对人）>组队竞技",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>升级材料/经验药水;抽卡/转盘付费>限定卡池",
+      "付费结构复杂度": "高",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "从前有条街-模拟穿越种田",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "东方文化向>国风",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-34岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "梦幻庄园-快乐合成休闲解压",
+    "标签": {
+      "玩法机制": "策略型玩法>模拟经营",
+      "题材世界观": "幻想/奇幻向>奇幻冒险",
+      "战斗模式": "非对抗型>经营",
+      "节奏强度": "轻度游戏>轻度",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+      "付费模式": "订阅制",
+      "付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "征途2-嘉年华",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>玄幻",
+      "战斗模式": "PVP（对人）>跨服战",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "吞食之刃-新服刚开",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "少年名将-送千抽三国放置卡牌",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+      "游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+      "付费模式": "概率付费+订阅制",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+      "付费结构复杂度": "中",
+      "核心付费动机": "进度与掌控;长线性价比",
+      "说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "幻兽爱合成",
+    "标签": {
+      "玩法机制": "轻度玩法>点击放置",
+      "题材世界观": "幻想/奇幻向>奇异生物",
+      "战斗模式": "非对抗型>合成",
+      "节奏强度": "轻度游戏>放置",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+      "游戏动机": ["解压逃避>碎片时间", "心理反馈>治愈放松型"],
+      "付费模式": "订阅制",
+      "付费点类型": "广告变现;通行证体系>赛季通行证",
+      "付费结构复杂度": "低",
+      "核心付费动机": "进度与掌控;解压逃避",
+      "说明": "情绪疏导、逃避现实、缓解压力;心理反馈>治愈放松型（未映射） | 成本优化 / 长期投资意识 / 稳健回报感;情绪疏导、逃避现实、缓解压力"
+    }
+  },
+  {
+    "name": "仙剑奇侠传：新的开始-仙侠仙剑无限抽卡",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>18-34岁", "兴趣/文化类>IP粉丝", "玩法偏好类>情怀驱动型"],
+      "游戏动机": ["收集成长>图鉴收集", "沉浸驱动>情怀型玩家"],
+      "付费模式": "概率付费+内容解锁",
+      "付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情怀驱动;收集与养成",
+      "说明": "长期陪伴、完整性、囤积安全感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;完整性满足 / 囤积成就 / 安全掌控感"
+    }
+  },
+  {
+    "name": "烈焰荣耀-打金复古传奇手游",
+    "标签": {
+      "玩法机制": "操作型玩法>动作ARPG",
+      "题材世界观": "东方文化向>玄幻",
+      "战斗模式": "PVE（对环境）>刷图打怪",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+      "付费结构复杂度": "高",
+      "核心付费动机": "数值与强度;进度与掌控",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+    }
+  },
+  {
+    "name": "奥特曼系列OL-妖骸魔獣登场",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "ACG向>动漫IP",
+      "战斗模式": "PVE（对环境）>副本推图",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>8-12岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+      "游戏动机": ["收集成长>角色收集", "对抗竞技>非对称对抗"],
+      "付费模式": "概率付费+数值碾压",
+      "付费点类型": "角色养成付费>抽卡/招募角色;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;数值与强度",
+      "说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+    }
+  },
+  {
+    "name": "劲舞时代",
+    "标签": {
+      "玩法机制": "轻度玩法>快节奏反应",
+      "题材世界观": "现实/写实向>现代都市",
+      "战斗模式": "非对抗型>节奏",
+      "节奏强度": "轻度游戏>快节奏",
+      "用户画像": ["性别偏好>女性为主", "年龄段分布>13-24岁", "兴趣/文化类>社交型玩家"],
+      "游戏动机": ["社交互动>情感陪伴型", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁",
+      "付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;社交炫耀",
+      "说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+    }
+  },
+  {
+    "name": "三国杀名将传-七周年庆典",
+    "标签": {
+      "玩法机制": "策略型玩法>卡牌策略",
+      "题材世界观": "其他向>历史三国",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>单挑胜负", "收集成长>卡牌收集"],
+      "付费模式": "概率付费",
+      "付费点类型": "抽卡/转盘付费>常规抽卡/转盘;角色养成付费>角色突破/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "收集与养成;稀缺与限定",
+      "说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+    }
+  },
+  {
+    "name": "守塔不能停-多人联机塔防",
+    "标签": {
+      "玩法机制": "策略型玩法>塔防",
+      "题材世界观": "幻想/奇幻向>西方魔幻",
+      "战斗模式": "PVE（对环境）>塔防",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "玩法偏好类>策略控"],
+      "游戏动机": ["对抗竞技>排行榜争夺", "心理反馈>探索好奇驱动"],
+      "付费模式": "数值碾压",
+      "付费点类型": "装备系统付费>强化/升星;战斗资源付费>战斗增益道具",
+      "付费结构复杂度": "中",
+      "核心付费动机": "策略控;探索好奇驱动",
+      "说明": "展现能力、支配局势、击败他人快感;心理反馈>探索好奇驱动（未映射） | 策略控（未映射）;好奇心满足（未映射）"
+    }
+  },
+  {
+    "name": "火柴人联盟3-狂欢派对",
+    "标签": {
+      "玩法机制": "操作型玩法>格斗",
+      "题材世界观": "其他向>脑洞恶搞",
+      "战斗模式": "PVP（对人）>单挑对抗",
+      "节奏强度": "中度游戏>中度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>13-24岁", "玩法偏好类>PVP竞技党"],
+      "游戏动机": ["对抗竞技>单挑胜负", "爽感刺激>快节奏操作"],
+      "付费模式": "内容解锁+数值碾压",
+      "付费点类型": "外观类付费>皮肤/时装;装备系统付费>强化/升星",
+      "付费结构复杂度": "中",
+      "核心付费动机": "审美与表达;实力证明欲",
+      "说明": "展现能力、支配局势、击败他人快感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;实力证明欲（未映射）"
+    }
+  },
+  {
+    "name": "热血江湖手游-怀旧服",
+    "标签": {
+      "玩法机制": "成长型玩法>RPG养成",
+      "题材世界观": "东方文化向>武侠",
+      "战斗模式": "PVE（对环境）>剧情副本",
+      "节奏强度": "重度游戏>重度",
+      "用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>情怀驱动型"],
+      "游戏动机": ["探索认知>剧情追踪", "沉浸驱动>情怀型玩家"],
+      "付费模式极 "内容解锁",
+      "付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+      "付费结构复杂度": "高",
+      "核心付费动机": "情怀驱动;内容解锁驱动",
+      "说明": "好奇心满足、理解世界、建构秩序感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;内容解锁驱动（未映射）"
+    }
+  },
+  {
+    "name": "阿瑞斯病毒2",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVE（对环境）>生存探索",
+"节奏极强": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>生存控"],
+"游戏动机": ["收集成长>资源积累", "探索认知>生存探索"],
+"付费模式": "混合型（概率+数值）",
+"付费点类型": "装备系统付费>打造随机词条;战斗资源付费>战斗增益道具",
+"付费结构复杂度": "中",
+"核心付费动机": "生存焦虑驱动;探索好奇驱动",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 生存焦虑驱动（未映射）;好奇心满足（未映射）"
+}
+},
+{
+"name": "哈利波特：魔法觉醒",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>图鉴收集", "社交互动>群体合作"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;社交关系驱动",
+"说明": "长期陪伴、完整性、囤积安全感;社交反馈、群体归属、被接纳感 | 完整性满足 / 囤积成就 / 安全掌控感;社交关系驱动（未映射）"
+}
+},
+{
+"name": "长安幻想-易宝生财",
+"标签": {
+"玩法机制": "成长型玩法>回合制战斗",
+"题材世界观": "东方文化向>国风",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+"付费模式": "概率付费+数值碾压",
+"付费点类型": "角色养成付费>升级材料/经验药水;抽卡/转盘付费>限定卡池",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;数值与强度",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "我本千金",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>社交",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>社交型玩家", "玩法偏好类>剧情党"],
+"游戏动机": ["社交互动>情感陪伴型", "沉浸驱动>代入感强"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "中",
+"核心付费动机": "审美与表达;社交炫耀",
+"说明": "社交反馈、群体归属、被接纳感;沉浸驱动>代入感强（未映射） | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+}
+},
+{
+"name": "指尖像素城-上线送千抽",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "非对抗型>建造",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["创造驱动>建造", "社交互动>联机协作"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;其他系统付费>背包扩展",
+"付费结构复杂度": "低",
+"核心付费动机": "审美与表达;个性表达",
+"极明": "创造驱动>建造（未映射）;社交反馈、群体归属、被接纳感 | 审美享受 / 个性表达 / 外观社交认同;个性表达（未映射）"
+}
+},
+{
+"name": "弹壳特攻队",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "PVE（对环境）>刷图打怪",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["收集成长>装备收集", "探索认知>世界探索"],
+"付费模式": "概率付费",
+"付费点类型": "装备系统付费>强化/升星;抽卡/转盘付费>氪金神器",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;探索动机",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;探索动机（未映射）"
+}
+},
+{
+"name": "我的休闲时光",
+"标签": {
+"玩法机制": "轻度玩法>点击放置",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>装扮",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["创造驱动>装扮", "沉浸驱动>治愈放松型"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "审美与表达;情感陪伴",
+"说明": "创造驱动>装扮（未映射）;沉浸驱动>治愈放松型（未映射） | 审美享受 / 个性表达 / 外观社交认同;情感寄托 / 陪伴感 / 角色情绪投射"
+}
+},
+{
+"name": "曙光英雄-吕洞宾重做归来",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "东方文化向>神话",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>PVP竞技党"],
+"游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+"付费模式": "内容解锁+数值碾压",
+"付费点类型": "外观类付费>皮肤/时装;装备系统付费>强化/升星",
+"付费结构复杂度": "中",
+"核心付费动机": "审美与表达;社交支配",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;社交支配（未映射）"
+}
+},
+{
+"name": "芒果斗地主-比赛版",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "PVP（对人）>单挑对抗",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+"游戏动机": ["对抗竞技>单挑胜负", "解压逃避>碎片时间"],
+"付费模式": "概率付费",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>复活币",
+"付费结构复杂度": "低",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "展现能力、支配局势、击败他人快感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "蜀门-经典热血仙侠",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>仙侠/国风",
+"战斗模式": "PVE（对环境）>剧情副本",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+"游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+"付费模式": "内容解锁",
+"付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;审美与表达",
+"说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+}
+},
+{
+"name": "巅峰坦克-支持144高帧率",
+"标签": {
+"玩法机制": "操作型玩法>TPS",
+"题材世界观": "现实/写实向>枪战军事",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+"游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>附魔/铭刻;战斗资源付费>战斗增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;稀缺与限定",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、极现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "一拳超人：最强之男",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化极>IP粉丝", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+"付费模式": "概率付费",
+"付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;稀缺与限定",
+"说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "君临传奇-重磅更新",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVE（对环境）>刷图打怪",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "怪物联萌-无限流塔防送百连抽",
+"标签": {
+"玩法机制": "成长型玩法>点击放置",
+"题材世界观": "幻想/奇幻向>奇异生物",
+"战斗模式": "非对抗型>塔防",
+"节奏强度": "轻度游戏>放置",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["解压逃避>碎片时间", "心理反馈>探索好奇驱动"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;通行证体系>赛季通行证",
+"付费结构复杂度": "中",
+"核心付费动机": "收集欲;便利性需求",
+"说明": "情绪疏导、逃避现实、缓解压力;心理反馈>探索好奇驱动（未映射） | 收集欲（未映射）;便利性需求（未映射）"
+}
+},
+{
+"name": "热血合击-经典传奇",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVP（对人）>跨服战",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "天羽传奇-最强战兵",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVE（对环境）>刷图打怪",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "群英风华录-免费送千抽",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "其他向>历史三国",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+"游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+"付费结构复杂度": "中",
+"核心付费动机": "进度与掌控;长线性价比",
+"说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "全民主公Ⅱ",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "其他向>历史三国",
+"战斗模式": "PVE（对环境）>塔防",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>策略控"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>卡牌收集"],
+"付费模式": "概率付费",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;角色养成付费>角色突破/升星",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;稀缺与限定",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "途游休闲捕鱼-新赛季",
+"标签": {
+"玩法机制": "博彩型玩法>捕鱼类",
+"题材世界观": "",
+"战斗模式": "PVE（对环境）>模拟",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+"游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+"付费模式": "概率付费+数值碾压",
+"付费点类型": "抽卡/转盘付费>限定卡池;战斗资源付费>战斗增益道具",
+"付费结构复杂度": "中",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "西普大陆-回合制精灵养成",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "幻想/奇幻向>奇幻冒险",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>宠物控", "探索认知>世界探索"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>坐骑/宠物外形",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;探索好奇驱动",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;好奇心满足（未映射）"
+}
+},
+{
+"name": "源战役-化神魔女神装高爆率",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "梦想城镇-欢乐端午粽情飘香",
+"标签": {
+"玩法机制": "策略型玩法>模拟经营",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>经营",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["创造驱动>模拟", "解压逃避>日常治愈"],
+"付费模式": "订阅制",
+"付费点类型": "成长加速付费>月卡/周卡;其他系统付费>社交/名字/改名卡",
+"付费结构复杂度": "低",
+"核心付费动机": "进度与掌控;长线性价比",
+"说明": "创造驱动>模拟（未映射）;情绪疏导、逃避现实、缓解压力 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "暗夜地城-超低折高爆仙侠修仙",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>仙侠/国风",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "一刀传世-送限定称号",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVP（对人）>跨服战",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "梦三国-英雄全免费",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "其他向>历史三国",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVP竞技党"],
+"游戏动机": ["对抗竞技>技巧挑战", "自我认同>成就体现"],
+"付费模式": "内容解锁+数值碾压",
+"付费点类型": "外观类付费>皮肤/时装;装备系统付费>附魔/铭刻",
+"付费结构复杂度": "高",
+"核心付费动机": "审美与表达;实力证明欲",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;实力证明欲（未映射）"
+}
+},
+{
+"name": "天龙八部2：飞龙战天-二周年回归领坐骑",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>武侠",
+"战斗模式": "PVE（对环境）>剧情副本",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+"游戏动机": ["探索认知>剧情追踪", "角色代偿>扮演不同身份"],
+"付费模式": "内容解锁",
+"付费点类型": "角色养成付费>转职觉醒系统;外观类付费>坐骑/宠物外形",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;审美与表达",
+"说明": "好奇心满足、理解世界、建构秩序感;体验不同人生、身份逃逸、自我扩展 | 情感寄托 / 陪伴感 / 角色情绪投射;审美享受 / 个性表达 / 外观社交认同"
+}
+},
+{
+"name": "造梦西游OL-全新特技上线",
+"标签": {
+"玩法机制": "操作型玩法>动作ARPG",
+"题材世界观": "东方文化向>神话",
+"战斗模式": "PVE（对环境）>剧情副本",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>剧情党"],
+"游戏动机": ["探索认知>剧情追踪", "沉浸驱动>情怀型玩家"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情怀驱动;收集与养成",
+"说明": "好奇心满足、理解世界、建构秩序感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "王者传奇",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVP（对人）>跨服战",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "改装大作战-甄嬛传联动",
+"标签": {
+"玩法机制": "轻度玩法>点击放置",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>装扮",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["创造驱动>装扮", "沉浸驱动>治愈放松型"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "审美与表达;情感陪伴",
+"说明": "创造驱动>装扮（未映射）;沉浸驱动>治愈放松型（未映射） | 审美享受 / 个性表达 / 外观社交认同;情感寄托 / 陪伴感 / 角色情绪投射"
+}
+},
+{
+"name": "指尖捕鱼-经典街机万炮捕鱼",
+"标签": {
+"玩法机制": "博彩型玩法>捕鱼类",
+"题材世界观": "",
+"战斗模式": "PVE（对环境）>模拟",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+"游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+"付费模式": "概率付费",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+"付费结构复杂度": "中",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "玄影",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>仙侠/国风",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "保卫萝卜4-童话主题上映",
+"标签": {
+"玩法机制": "策略型玩法>塔防",
+"题材世界观": "幻想/奇幻向>奇异生物",
+"战斗模式": "PVE（对环境）>塔防",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["收集成长>图鉴收集", "心理反馈>探索好奇驱动"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;长线性价比",
+"说明": "长期陪伴、完整性、囤积安全感;心理反馈>探索好奇驱动（未映射） | 完整性满足 / 囤积成就 / 安全掌控感;成本优化 / 长期投资意识 / 稳健回报感"
+}
+},
+{
+"name": "多乐保皇-山东经典原汁原味",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+"游戏动机": ["社交互动>好友组队", "解压逃避>碎片时间"],
+"付费模式": "概率付费",
+"付费点类型": "战斗资源付费>复活币;抽卡/转盘付费>常规抽卡/转盘",
+"付费结构复杂度": "低",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "社交反馈、群体归属、被接纳感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "新斗罗大陆-SSP新魂师萧萧",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+"付费模式": "概率付费",
+"付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;稀缺与限定",
+"说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "群星纪元-机甲洪流决战虫潮",
+"标签": {
+"玩法机制": "策略型玩法>SLG",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVP（对人）>跨服战",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>策略控"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "小小蚁国-超快发育版",
+"标签": {
+"玩法机制": "策略型玩法>SLG",
+"题材世界观": "其他向>奇异生物",
+"战斗模式": "PVP（对人）>跨服战",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>VIP段位加成",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "我的勇者-新手100抽",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "幻想/奇幻向>奇幻冒险",
+"战斗模式": "PVE（对环境）>刷图打怪",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["收集成长>装备收集", "探索认知>世界探索"],
+"付费模式": "概率付费",
+"付费点类型": "装备系统付费>强化/升星;抽卡/转盘付费>氪金神器",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;探索动机",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;探索动机（未映射）"
+}
+},
+{
+"name": "永恒仙域-山海经异兽卡牌",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "东方文化向>神话",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+"游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+"付费结构复杂度": "中",
+"核心付费动机": "进度与掌控;长线性价比",
+"说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报极;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "美职篮篮球世界-NBA正版授权",
+"标签": {
+"玩法机制": "轻度玩法>球类模拟",
+"题材世界观": "现实/写实向>竞技体育",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "轻度游戏>快节奏",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "兴趣/文化类>体育迷"],
+"游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+"付费模式": "概率付费+数值碾压",
+"付费点类型": "抽卡/转盘付费>球员卡包;装备系统付费>球员强化",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;数值与强度",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+}
+},
+{
+"name": "星球：重启-失落之地全新赛季",
+"标签": {
+"玩法机制": "策略型玩法>模拟经营",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVP（对人）>组队竞技;PVE（对环境）>生存探索",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>生存控"],
+"游戏动机": ["收集成长>资源积累", "探索认知>生存探索"],
+"付费模式": "混合型（概率+数值）",
+"付费点类型": "装备系统付费>打造随机词条;成长加速付费>月卡/周卡",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;收集与养成",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "未定事件簿-恋爱推理",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>剧情",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+"游戏动机": ["情感关系>恋爱幻想", "探索认知>解谜沉浸"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;收集与养成",
+"说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "双扣全集-千变火拼百变真人双扣",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>微氪"],
+"游戏动机": ["社交互动>好友组队", "解压逃避>碎片时间"],
+"付费模式": "概率付费",
+"付费点类型": "战斗资源付费>复活币;抽卡/转盘付费>常规抽卡/转盘",
+"付费结构复杂度": "低",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "社交反馈、群体归属、被接纳感;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "海滨消消乐-不联网也能玩",
+"标签": {
+"玩法机制": "轻度玩法>点击放置",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "非对抗型>消除",
+"节奏强度": "轻度游戏>碎片化",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>25-44岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["解压逃避>碎片时间", "心理反馈>情绪调节驱动"],
+"付费模式": "订阅制",
+"付费点类型": "广告变现;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "进度与掌控;解压逃避",
+"说明": "情绪疏导、逃避现实、缓解压力;心理反馈>情绪调节驱动（未映射） | 成本优化 / 长期投资意识 / 稳健回报感;情绪疏导、逃避现实、缓解压力"
+}
+},
+{
+"name": "捕鱼达人千炮版-天天爆金",
+"标签": {
+"玩法机制": "博彩型玩法>捕鱼类",
+"题材世界观": "",
+"战斗模式": "PVE（对环境）>模拟",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>35-44岁", "付费习惯类>重氪"],
+"游戏动机": ["爽感刺激>强回报", "解压逃避>节奏可控"],
+"付费模式": "概率付费",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;战斗资源付费>体力购买",
+"付费结构复杂度": "中",
+"核心付费动机": "随机刺激;爽感刺激",
+"说明": "多巴胺奖励、快感满足、沉浸快节奏循环;情绪疏导、逃避现实、缓解压力 | 运气掌控感 / 爆金幻想 / 赌徒心理 / 爽感循环;爽感刺激（未映射）"
+}
+},
+{
+"name": "奇葩战斗家",
+"标签": {
+"玩法机制": "社交型玩法>多人乱斗",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "PVP（对人）>多人乱斗",
+"节奏强度": "轻度游戏>快节奏",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["社交互动>多人乱斗", "爽感刺激>快节奏操作"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "审美与表达;社交炫耀",
+"说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+}
+},
+{
+"name": "晶核",
+"标签": {
+"玩法机制": "操作型玩法>即时战斗",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-24岁", "付费习惯类>中氪", "玩法偏好类>PVE副本控"],
+"游戏动机": ["收集成长>资源积累", "探索认知>世界探索"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;阶段追求驱动",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;阶段追求驱动（未映射）"
+}
+},
+{
+"name": "造梦无双-造梦西游",
+"标签": {
+"玩法机制": "操作型玩法>动作ARPG",
+"题材世界观": "东方文化向>神话",
+"战斗模式": "PVE（对环境）>剧情副本",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>剧情党"],
+"游戏动机": ["探索认知>剧情追踪", "沉浸驱动>情怀型玩家"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情怀驱动;收集与养成",
+"说明": "好奇心满足、理解世界、建构秩序感;沉浸驱动>情怀型玩家（未映射） | 情怀驱动（未映射）;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "雷电：觉醒-弹幕飞行射击",
+"标签": {
+"玩法机制": "操作型玩法>飞行射击",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVE（对环境）>刷图打怪",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["收集成长>装备收集", "爽感刺激>快节奏操作"],
+"付费模式": "概率付费",
+"付费点类型": "装备系统付费>强化/升星;抽卡/转盘付费>氪金神器",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;探索动机",
+"说明": "长期陪伴、完整性、囤积安全感;多巴胺奖励、快感满足、沉浸快节奏循环 | 完整性满足 / 囤积成就 / 安全掌控感;探索动机（未映射）"
+}
+},
+{
+"name": "最强蜗牛-魔性玩梗",
+"标签": {
+"玩法机制": "成长型玩法>点击放置",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "非对抗型>放置",
+"节奏强度": "轻度游戏>放置",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>18-34岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["解压逃避>碎片时间", "心理反馈>探索好奇驱动"],
+"付费模式": "订阅制",
+"付费点类型": "广告变现;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "探索好奇驱动;便利性需求",
+"说明": "情绪疏导、逃避现实、缓解压力;心理反馈>探索好奇驱动（未映射） | 探索好奇驱动（未映射）;便利性需求（未映射）"
+}
+},
+{
+"name": "永恒联盟-魔剑士归来",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "幻想/奇幻向>西方魔幻",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "自在西游",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "东方文化向>神话",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>挂机党"],
+"游戏动机": ["解压逃避>挂机", "收集成长>资源积累"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+"付费结构复杂度": "中",
+"核心付费动机": "进度与掌控;长线性价比",
+"说明": "情绪疏导、逃避现实、缓解压力;长期陪伴、完整性、囤积安全感 | 成本优化 / 长期投资意识 / 稳健回报感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "暗影格斗3-硬派格斗归来",
+"标签": {
+"玩法机制": "操作型玩法>格斗",
+"题材世界观": "幻想/奇幻向>奇幻冒险",
+"战斗模式": "PVP（对人）>单挑对抗",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>PVP竞技党"],
+"游戏动机": ["对抗竞技>单挑胜负", "自我认同>成就体现"],
+"付费模式": "内容解锁+数值碾压",
+"付费点类型": "外观类付费>皮肤/时装;装备系统付费>强化/升星",
+"付费结构复杂度": "中",
+"核心付费动机": "审美与表达;实力证明欲",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 审美享受 / 个性表达 / 外观社交认同;实力证明欲（未映射）"
+}
+},
+{
+"name": "暴吵萌厨",
+"标签": {
+"玩法机制": "轻度玩法>快节奏反应",
+"题材世界观": "其他向>脑洞恶搞",
+"战斗模式": "非对抗型>节奏",
+"节奏强度": "轻度游戏>快节奏",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>13-24岁", "兴趣/文化类>社交型玩家"],
+"游戏动机": ["社交互动>情感陪伴型", "爽感刺激>快节奏操作"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "中",
+"核心付费动机": "审美与表达;社交炫耀",
+"说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+}
+},
+{
+"name": "恋与制作人",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>社交",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+"游戏动机": ["情感关系>恋爱幻想", "沉浸驱动>代入感强"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;收集与养成",
+"说明": "渴望亲密关系、情绪安慰、安全情感替代;沉浸驱动>代入感强（未映射） | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "新不良人-第七季联动",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>18-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>图鉴收集", "探索认知>剧情追踪"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;情怀驱动",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 完整性满足 / 囤积成就 / 安全掌控感;情怀驱动（未映射）"
+}
+},
+{
+"name": "云上城之歌-怀旧福利服",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "幻想/奇幻向>奇幻冒险",
+"战斗模式": "PVE（对环境）>剧情副本",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>二次元", "玩法偏好类>剧情党"],
+"游戏动机": ["情感关系>恋爱幻想", "探索认知>剧情追踪"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;收集与养成",
+"说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "八荒主宰-下载享好礼",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>玄幻",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>肝帝"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>装备系统"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;进度与掌控",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;用钱省时间 / 掌控节奏 / 避免卡关疲劳"
+}
+},
+{
+"name": "炫舞浪漫爱",
+"标签": {
+"玩法机制": "轻度玩法>快节奏反应",
+"题材世界观": "现实/写实向>现代都市",
+"战斗模式": "非对抗型>节奏",
+"节奏强度": "轻度游戏>快节奏",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>13-24岁", "兴趣/文化类>社交型玩家"],
+"游戏动机": ["社交互动>情感陪伴型", "爽感刺激>快节奏操作"],
+"付费模式": "内容解锁",
+"付费点类型": "外观类付费>皮肤/时装/挂件;通行证体系>赛季通行证",
+"付费结构复杂度": "中",
+"核心付费动机": "审美与表达;社交炫耀",
+"说明": "社交反馈、群体归属、被接纳感;多巴胺奖励、快感满足、沉浸快节奏循环 | 审美享受 / 个性表达 / 外观社交认同;社交认同 / 被看见 / 优越展示"
+}
+},
+{
+"name": "三国杀OL互通版",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "其他极>历史三国",
+"战斗模式": "PVP（对人）>单挑对抗",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>25-44岁", "玩法偏好类>策略控"],
+"游戏动机": ["对抗竞技>单挑胜负", "收集成长>卡牌收集"],
+"付费模式": "概率付费",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;角色养成付费>角色突破/升星",
+"付费结构复杂度": "中",
+"核心付费极机": "收集与养成;稀缺与限定",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "守护之境-Q版三国休闲卡牌",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "轻度游戏>轻度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>8-17岁", "玩法偏好类>休闲娱乐型"],
+"游戏动机": ["收集成长>卡牌收集", "心理反馈>探索好奇驱动"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;通行证体系>赛季通行证",
+"付费结构复杂度": "低",
+"核心付费动机": "收集与养成;长线性价比",
+"说明": "长期陪伴、完整性、囤积安全感;心理反馈>探索好奇驱动（未映射） | 完整性满足 / 囤积成就 / 安全掌控感;成本优化 / 长期投资意识 / 稳健回报感"
+}
+},
+{
+"name": "斗罗大陆：武魂觉醒",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "ACG向>动漫IP",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男女均衡", "年龄段分布>13-24岁", "兴趣/文化类>IP粉丝", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>图鉴收集", "对抗竞技>排行榜争夺"],
+"付费模式": "概率付费",
+"付费点类型": "角色养成付费>抽卡/招募角色;成长加速付费>成长基金",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;稀缺与限定",
+"说明": "长期陪伴、完整性、囤积安全感;展现能力、支配局势、击败他人快感 | 完整性满足 / 囤积成就 / 安全掌控感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "灵界仙都-首款低折僵尸卡牌",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "其他向>僵尸",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>微氪", "玩法偏好类>收集控"],
+"游戏动机": ["收集成长>卡牌收集", "心理反馈>探索好奇驱动"],
+"付费模式": "概率付费+订阅制",
+"付费点类型": "抽卡/转盘付费>常规抽卡/转盘;成长加速付费>月卡/周卡",
+"付费结构复杂度": "中",
+"核心付费动机": "收集与养成;便利性需求",
+"说明": "长期陪伴、完整性、囤积安全感;心理反馈>探索好奇驱动（未映射） | 完整性满足 / 囤积成就 / 安全掌控感;便利性需求（未映射）"
+}
+},
+{
+"name": "花亦山心之月-国风权谋群像养成手游",
+"标签": {
+"玩法机制": "成长型玩法>RPG养成",
+"题材世界观": "东方文化向>国风",
+"战斗模式": "非对抗型>剧情",
+"节奏强度": "中度游戏>中度",
+"用户画像": ["性别偏好>女性为主", "年龄段分布>18-24岁", "兴趣/文化类>国风文化", "玩法偏好类>剧情党"],
+"游戏动机": ["情感关系>恋爱幻想", "探索认知>剧情追踪"],
+"付费模式": "概率付费+内容解锁",
+"付费点类型": "角色养成付费>抽卡/招募角色;外观类付费>皮肤/时装",
+"付费结构复杂度": "高",
+"核心付费动机": "情感投入;收集与养成",
+"说明": "渴望亲密关系、情绪安慰、安全情感替代;好奇心满足、理解世界、建构秩序感 | 情感寄托 / 陪伴感 / 角色情绪投射;完整性满足 / 囤积成就 / 安全掌控感"
+}
+},
+{
+"name": "梦幻西游网页版-网易出品",
+"标签": {
+"玩法机制": "策略型玩法>卡牌策略",
+"题材世界观": "东方文化向>仙侠/国风",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVE副本控"],
+"游戏动机": ["对抗竞技>排行榜争夺", "收集成长>宠物控"],
+"付费模式": "概率付费+数值碾压",
+"付费点类型": "角色养成付费>技能解锁与强化;抽卡/转盘付费>氪金角色",
+"付费结构复杂度": "高",
+"核心付费动机": "收集与养成;数值与强度",
+"说明": "展现能力、支配局势、击败他人快感;长期陪伴、完整性、囤积安全感 | 完整性满足 / 囤积成就 / 安全掌控感;战斗优势感 / 主宰体验 / 对抗焦虑感"
+}
+},
+{
+"name": "狂野飙车9：竞速传奇",
+"标签": {
+"玩法机制": "轻度玩法>球类模拟",
+"题材世界观": "现实/写实向>竞技体育",
+"战斗模式": "PVP（对人）>组队竞技",
+"节奏强度": "轻度游戏>快节奏",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "兴趣/文化类>体育迷"],
+"游戏动机": ["对抗竞技>上分冲段", "自我认同>成就体现"],
+"付费模式": "概率付费+数值碾压",
+"付费点类型": "抽卡/转盘付费>车辆零件;装备系统付费>车辆强化",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;稀缺与限定",
+"说明": "展现能力、支配局势、击败他人快感;被看见、获得成长、体现价值 | 战斗优势感 / 主宰体验 / 对抗焦虑感;FOMO / 稀有感驱动 / 收藏炫耀欲"
+}
+},
+{
+"name": "暗黑破坏神：不朽",
+"标签": {
+"玩法机制": "操作型玩法>动作ARPG",
+"题材世界观": "幻想/奇幻向>科幻",
+"战斗模式": "PVE（对环境）>副本推图",
+"节奏强度": "重度游戏>重度",
+"用户画像": ["性别偏好>男性为主", "年龄段分布>18-34岁", "付费习惯类>中氪", "玩法偏好类>PVE副本控"],
+"游戏动机": ["收集成长>资源积累", "探索认知>世界探索"],
+"付费模式": "数值碾压",
+"付费点类型": "装备系统付费>强化/升星;PVP增益付费>竞技增益道具",
+"付费结构复杂度": "高",
+"核心付费动机": "数值与强度;阶段追求驱动",
+"说明": "长期陪伴、完整性、囤积安全感;好奇心满足、理解世界、建构秩序感 | 战斗优势感 / 主宰体验 / 对抗焦虑感;阶段追求驱动（未映射）"
+}
+}
+        ];
+
+        // 游戏打标数据库
+        const gameTagDatabase = {};
+      gameData.forEach(game => {
+            if (game.标签) {
+                gameTagDatabase[game.name] = {
+                    "游戏内容理解": [
+                        game.标签["玩法机制"] || "",
+                        game.标签["题材世界观"] || "",
+                        game.标签["战斗模式"] || "",
+                        game.标签["节奏强度"] || ""
+                    ].filter(Boolean),
+                    "用户画像标签": game.标签["用户画像"] || [],
+                    "游戏动机": game.标签["游戏动机"] || [],
+                    "付费理解": [
+                        game.标签["付费模式"] || "",
+                        game.标签["付费点类型"] || "",
+                        game.标签["付费结构复杂度"] || "",
+                        game.标签["核心付费动机"] || "",
+                        game.标签["说明"] || ""
+                    ].filter(Boolean)
+                };
+            }
+        });
+        
+        // 获取当前时间
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleDateString() + ' ' + now.toLocaleTimeString();
+        }
+        
+        // 模糊匹配游戏名称 - 修复版
+        function findMatchingGame(input) {
+            // 标准化输入：去除空格、特殊符号，转换为小写
+            const normalize = (str) => {
+                return str.replace(/[\s·\.\-:]/g, '').toLowerCase();
+            };
+            
+            const normalizedInput = normalize(input);
+            
+            // 尝试完全匹配
+            for (const gameName in gameTagDatabase) {
+                if (normalize(gameName) === normalizedInput) {
+                    return gameName;
+                }
+            }
+            
+            // 尝试部分匹配
+            for (const gameName in gameTagDatabase) {
+                const normalizedGame = normalize(gameName);
+                if (normalizedGame.includes(normalizedInput)) {
+                    return gameName;
+                }
+            }
+            
+            // 尝试包含输入词的匹配
+            for (const gameName in gameTagDatabase) {
+                const normalizedGame = normalize(gameName);
+                if (normalizedInput.includes(normalizedGame) || normalizedGame.includes(normalizedInput)) {
+                    return gameName;
+                }
+            }
+            
+            return null;
+        }
+        
+        // 生成搜索建议
+        function generateSuggestions(input) {
+            const suggestionsContainer = document.getElementById('suggestionsContainer');
+            suggestionsContainer.innerHTML = '';
+            
+            if (!input) {
+                suggestionsContainer.style.display = 'none';
+                return;
+            }
+            
+            const normalizedInput = input.trim().toLowerCase().replace(/\s+/g, '');
+            const suggestions = [];
+            
+            // 收集匹配项
+            for (const gameName in gameTagDatabase) {
+                const normalizedGame = gameName.toLowerCase().replace(/\s+/g, '');
+                
+                if (normalizedGame.includes(normalizedInput)) {
+                    suggestions.push(gameName);
+                }
+                
+                // 限制最多显示8条建议
+                if (suggestions.length >= 8) {
+                    break;
+                }
+            }
+            
+            if (suggestions.length > 0) {
+                suggestions.forEach(gameName => {
+                    const item = document.createElement('div');
+                    item.className = 'suggestion-item';
+                    item.textContent = gameName;
+                    
+                    // 高亮匹配部分
+                    const startIndex = gameName.toLowerCase().indexOf(normalizedInput);
+                    if (startIndex !== -1) {
+                        const endIndex = startIndex + normalizedInput.length;
+                        const before = gameName.substring(0, startIndex);
+                        const match = gameName.substring(startIndex, endIndex);
+                        const after = gameName.substring(endIndex);
+                        
+                        item.innerHTML = `${before}<span class="suggestion-highlight">${match}</span>${after}`;
+                    }
+                    
+                    item.addEventListener('click', function() {
+                        document.getElementById('gameInput').value = gameName;
+                        suggestionsContainer.style.display = 'none';
+                        document.getElementById('taggingBtn').click();
+                    });
+                    
+                    suggestionsContainer.appendChild(item);
+                });
+                
+                suggestionsContainer.style.display = 'block';
+            } else {
+                suggestionsContainer.style.display = 'none';
+            }
+        }
+        
+        // 游戏打标功能
+        document.getElementById('taggingBtn').addEventListener('click', function() {
+            const gameNameInput = document.getElementById('gameInput').value.trim();
+            const resultsSection = document.getElementById('taggingResults');
+            
+            if (!gameNameInput) {
+                alert('请输入游戏名称');
+                return;
+            }
+            
+            // 使用模糊匹配查找游戏
+            const matchedGameName = findMatchingGame(gameNameInput);
+            
+            if (matchedGameName && gameTagDatabase[matchedGameName]) {
+                document.getElementById('gameName').textContent = matchedGameName;
+                document.getElementById('analysisTime').textContent = getCurrentTime();
+                
+                // 更新标签
+                const contentTags = document.getElementById('contentTags');
+                contentTags.innerHTML = '';
+                gameTagDatabase[matchedGameName]["游戏内容理解"].forEach(tag => {
+                    const tagEl = document.createElement('div');
+                    tagEl.className = 'result-tag';
+                    tagEl.textContent = tag;
+                    contentTags.appendChild(tagEl);
+                });
+                
+                const userTags = document.getElementById('userTags');
+                userTags.innerHTML = '';
+                gameTagDatabase[matchedGameName]["用户画像标签"].forEach(tag => {
+                    const tagEl = document.createElement('div');
+                    tagEl.className = 'result-tag';
+                    tagEl.textContent = tag;
+                    userTags.appendChild(tagEl);
+                });
+                
+                const motivationTags = document.getElementById('motivationTags');
+                motivationTags.innerHTML = '';
+                gameTagDatabase[matchedGameName]["游戏动机"].forEach(tag => {
+                    const tagEl = document.createElement('div');
+                    tagEl.className = 'result-tag';
+                    tagEl.textContent = tag;
+                    motivationTags.appendChild(tagEl);
+                });
+                
+                const paymentTags = document.getElementById('paymentTags');
+        paymentTags.innerHTML = '';
+        gameTagDatabase[matchedGameName]["付费理解"].forEach(tag => {
+            const tagEl = document.createElement('div');
+            tagEl.className = 'result-tag';
+            
+            // 优化付费理解标签展示（添加维度名称）
+            if (tag.includes('>')) {
+                // 已有维度名称的标签直接显示
+                tagEl.textContent = tag;
+            } else if (tag === "低" || tag === "中" || tag === "高") {
+                // 付费结构复杂度标签
+                tagEl.textContent = `付费结构复杂度 > ${tag}`;
+            } else if (tag.includes("驱动") || tag === "成瘾强化驱动") {
+                // 核心付费动机标签
+                tagEl.textContent = `核心付费动机 > ${tag}`;
+            } else if (tag.includes("型") || tag === "高频消耗型") {
+                // 玩家消费倾向标签
+                tagEl.textContent = `玩家消费倾向 > ${tag}`;
+            } else {
+                // 付费模式标签
+                tagEl.textContent = `付费模式 > ${tag}`;
+            }
+            
+            paymentTags.appendChild(tagEl);
+        });
+                
+                resultsSection.style.display = 'block';
+                
+                // 滚动到结果区域
+                resultsSection.scrollIntoView({behavior: 'smooth'});
+            } else {
+                alert('未找到该游戏的标签信息，请尝试其他游戏');
+            }
+        });
+        
+        // 随机游戏按钮
+        document.getElementById('randomBtn').addEventListener('click', function() {
+            const games = Object.keys(gameTagDatabase);
+            const randomGame = games[Math.floor(Math.random() * games.length)];
+            document.getElementById('gameInput').value = randomGame;
+            
+            // 自动触发分析
+            document.getElementById('taggingBtn').click();
+        });
+        
+        // 清除结果按钮
+        document.getElementById('clearBtn').addEventListener('click', function() {
+            document.getElementById('gameInput').value = '';
+            document.getElementById('taggingResults').style.display = 'none';
+            document.getElementById('suggestionsContainer').style.display = 'none';
+        });
+        
+        // 输入框输入事件 - 生成建议
+        document.getElementById('gameInput').addEventListener('input', function() {
+            generateSuggestions(this.value);
+        });
+        
+        // 点击页面其他位置时隐藏建议
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.tagging-input')) {
+                document.getElementById('suggestionsContainer').style.display = 'none';
+            }
+        });
+        
+        // 标签详情数据
+        const tagDetails = {
+            1: {
+                name: "操作型玩法",
+                dimension: "游戏内容理解 > 玩法机制",
+                description: "强调玩家操作技巧和反应速度的游戏玩法类型",
+                subTags: ["FPS", "TPS", "动作ARPG", "即时战斗", "格斗", "跑酷"],
+                relatedTags: ["PVP竞技党", "强对抗偏好", "实力证明欲"]
+            },
+            2: {
+                name: "策略型玩法",
+                dimension: "游戏内容理解 > 玩法机制",
+                description: "需要玩家进行规划和战略思考的游戏玩法",
+                subTags: ["SLG", "自走棋", "塔防", "卡牌策略", "模拟经营"],
+                relatedTags: ["策略控", "回合制战斗", "中重度"]
+            },
+            3: {
+                name: "社交型玩法",
+                dimension: "游戏内容理解 > 玩法机制",
+                description: "以玩家互动和社交为核心的游戏玩法",
+                subTags: ["派对游戏", "狼人杀", "多人乱斗", "UGC创造", "语音社交"],
+                relatedTags: ["社交型玩家", "情感陪伴型", "语音互动"]
+            },
+            17: {
+                name: "性别偏好",
+                dimension: "用户画像标签 > 基本属性",
+                description: "游戏主要吸引的玩家性别分布",
+                subTags: ["男性为主", "女性为主", "男女均衡"],
+                relatedTags: ["二次元", "国风文化", "装扮"]
+            },
+            19: {
+                name: "付费习惯类",
+                dimension: "用户画像标签 > 用户分类",
+                description: "玩家在游戏中的消费行为和倾向",
+                subTags: ["零氪", "微氪", "中氪", "重氪", "白嫖党"],
+                relatedTags: ["高频消耗型", "月卡/周卡", "外观装扮型"]
+            },
+            22: {
+                name: "竞技驱动",
+                dimension: "游戏动机 > 核心驱动力",
+                description: "玩家通过竞争和胜利获得满足感的动机",
+                subTags: ["上分冲段", "单挑胜负", "排行榜争夺", "PVP竞技偏好", "强对抗偏好"],
+                relatedTags: ["PVP竞技党", "竞技增益道具", "战力压制"]
+            },
+            29: {
+                name: "付费结构复杂度",
+                dimension: "付费理解 > 付费结构",
+                description: "游戏付费系统的复杂程度",
+                subTags: ["低(≤3个主付费点)", "中(4-6个主付费点)", "高(≥7个主付费点)"],
+                relatedTags: ["强驱动追求型", "付费点分类", "玩家消费倾向"]
+            },
+            32: {
+                name: "概率付费",
+                dimension: "付费理解 > 付费模式",
+                description: "基于随机概率的付费机制",
+                subTags: ["抽卡/招募角色", "抽装备/锻造", "常规抽卡/转盘", "限定卡池/活动抽卡"],
+                relatedTags: ["赌徒心理/收集欲", "风险偏好/即时反馈", "稀缺性驱动/FOMO"]
+            },
+            34: {
+                name: "内容解锁",
+                dimension: "付费理解 > 付费模式",
+                description: "通过付费解锁特定游戏内容",
+                subTags: ["皮肤/时装/挂件", "坐骑/宠物外形", "头像框/称号装饰", "仓库/背包扩展"],
+                relatedTags: ["个性表达/社交展示", "减轻负担/操作便利", "内容探索/叙事沉浸"]
+            },
+            91: {
+                name: "低复杂度(≤3个主付费点)",
+                dimension: "付费理解 > 付费结构复杂度",
+                description: "付费点较少，结构简单清晰的付费系统",
+                subTags: ["简单付费系统", "清晰付费路径"],
+                relatedTags: ["轻度游戏", "休闲玩家"]
+            },
+            92: {
+                name: "中复杂度(4-6个主付费点)",
+                dimension: "付费理解 > 付费结构复杂度",
+                description: "中等数量付费点，结构平衡的付费系统",
+                subTags: ["多系统付费", "平衡付费结构"],
+                relatedTags: ["中度游戏", "主流玩家"]
+            },
+            93: {
+                name: "高复杂度(≥7个主付费点)",
+                dimension: "付费理解 > 付费结构复杂度",
+                description: "多个付费系统，结构复杂的付费模式",
+                subTags: ["深度付费系统", "多层付费结构"],
+                relatedTags: ["重度游戏", "硬核玩家"]
+            },
+            94: {
+                name: "即时反馈驱动",
+                dimension: "付费理解 > 核心付费动机",
+                description: "玩家付费后能立即获得收益或结果的动机",
+                subTags: ["快速回报", "立即效果"],
+                relatedTags: ["快节奏游戏", "冲动消费"]
+            },
+            95: {
+                name: "成瘾强化驱动",
+                dimension: "付费理解 > 核心付费动机",
+                description: "通过重复行为强化玩家付费习惯的机制",
+                subTags: ["习惯养成", "连续奖励"],
+                relatedTags: ["日常任务", "登录奖励"]
+            },
+            103: {
+                name: "高频消耗型",
+                dimension: "付费理解 > 玩家消费倾向",
+                description: "小额高频次付费习惯的玩家类型",
+                subTags: ["小额付费", "频繁消费"],
+                relatedTags: ["微氪玩家", "日常消耗品"]
+            },
+            104: {
+                name: "强驱动追求型",
+                dimension: "付费理解 > 玩家消费倾向",
+                description: "为追求特定目标而进行大额付费的玩家类型",
+                subTags: ["目标驱动", "大额付费"],
+                relatedTags: ["成就追求", "稀有物品"]
+            },
+            110: {
+                name: "概率付费",
+                dimension: "付费理解 > 付费模式",
+                description: "基于随机概率的付费机制",
+                subTags: ["抽卡", "转盘", "随机掉落"],
+                relatedTags: ["收集欲", "赌徒心理"]
+            },
+            111: {
+                name: "数值碾压",
+                dimension: "付费理解 > 付费模式",
+                description: "付费获得数值优势的付费模式",
+                subTags: ["属性提升", "战力增强"],
+                relatedTags: ["竞技优势", "PVP优势"]
+            },
+            112: {
+                name: "内容解锁",
+                dimension: "付费理解 > 付费模式",
+                description: "付费解锁特定游戏内容的模式",
+                subTags: ["新区域", "新角色", "新剧情"],
+                relatedTags: ["探索驱动", "内容消费"]
+            }
+        };
+        
+        // 选择标签时显示详情
+        document.querySelectorAll('.tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                const tagId = parseInt(this.getAttribute('data-id'));
+                const detail = tagDetails[tagId];
+                
+                if (detail) {
+                    document.getElementById('tag-name').textContent = detail.name;
+                    document.getElementById('tag-dimension').textContent = detail.dimension;
+                    document.getElementById('tag-description').textContent = detail.description;
+                    
+                    // 更新子标签
+                    const subTagsContainer = document.getElementById('sub-tags');
+                    subTagsContainer.innerHTML = '';
+                    detail.subTags.forEach(tag => {
+                        const tagEl = document.createElement('div');
+                        tagEl.className = 'detail-tag';
+                        tagEl.textContent = tag;
+                        subTagsContainer.appendChild(tagEl);
+                    });
+                    
+                    // 更新相关标签
+                    const relatedTagsContainer = document.getElementById('related-tags');
+                    relatedTagsContainer.innerHTML = '';
+                    detail.relatedTags.forEach(tag => {
+                        const tagEl = document.createElement('div');
+                        tagEl.className = 'detail-tag';
+                        tagEl.textContent = tag;
+                        relatedTagsContainer.appendChild(tagEl);
+                    });
+                    
+                    // 显示详情内容
+                    document.querySelector('.detail-content').style.display = 'block';
+                    document.querySelector('.empty-state').style.display = 'none';
+                    
+                    // 滚动到详情面板顶部
+                    document.querySelector('.detail-panel').scrollTop = 0;
+                }
+            });
+        });
+        
+        // 关闭详情面板
+        document.querySelector('.close-btn').addEventListener('click', function() {
+            document.querySelector('.detail-content').style.display = 'none';
+            document.querySelector('.empty-state').style.display = 'block';
+        });
+    </script>
+
+<script>
+const input = document.getElementById("gameInput");
+const btn = document.getElementById("taggingBtn");
+const suggestions = document.getElementById("suggestionsContainer");
+
+const allGames = Object.keys(gameTags);
+
+// 搜索建议展示
+input.addEventListener("input", function () {
+  const query = input.value.trim().toLowerCase();
+  suggestions.innerHTML = "";
+  if (!query) {
+    suggestions.style.display = "none";
+    return;
+  }
+  const matched = allGames.filter(name => name.toLowerCase().includes(query));
+  if (matched.length === 0) {
+    suggestions.style.display = "none";
+    return;
+  }
+  matched.slice(0, 10).forEach(name => {
+    const item = document.createElement("div");
+    item.className = "suggestion-item";
+    item.innerText = name;
+    item.onclick = () => {
+      input.value = name;
+      suggestions.style.display = "none";
+    };
+    suggestions.appendChild(item);
+  });
+  suggestions.style.display = "block";
+});
+
+// 搜索执行逻辑
+btn.addEventListener("click", function () {
+  const query = input.value.trim().toLowerCase();
+  let match = allGames.find(name => name.toLowerCase() === query);
+  if (!match) {
+    match = allGames.find(name => name.toLowerCase().includes(query));
+  }
+
+  const data = gameTags[match];
+  const resultContainer = document.getElementById("taggingResults");
+  const gameNameNode = document.getElementById("gameName");
+
+  const setTags = (tagList, containerId, label = "") => {
+    const container = document.getElementById(containerId);
+    container.innerHTML = "";
+    if (!tagList || tagList.length === 0) {
+      container.innerHTML = "<div class='result-tag'>暂无数据</div>";
+      return;
+    }
+    tagList.forEach(tag => {
+      const tagNode = document.createElement("div");
+      tagNode.className = "result-tag";
+      tagNode.innerText = label ? `${label}: ${tag}` : tag;
+      container.appendChild(tagNode);
+    });
+  };
+
+  if (data) {
+    resultContainer.style.display = "block";
+    gameNameNode.innerText = match;
+
+    setTags(data.content, "contentTags");
+    setTags(data.user, "userTags");
+
+    // 游戏动机区：游戏动机 + 付费动机 + 说明
+    const motivationContainer = document.getElementById("motivationTags");
+    motivationContainer.innerHTML = "";
+
+    const addBlock = (title, items) => {
+      if (!items || items.length === 0) return;
+      const titleNode = document.createElement("div");
+      titleNode.className = "dimension-name";
+      titleNode.innerText = title;
+      motivationContainer.appendChild(titleNode);
+      items.forEach(tag => {
+        const tagNode = document.createElement("div");
+        tagNode.className = "result-tag";
+        tagNode.innerText = tag;
+        motivationContainer.appendChild(tagNode);
+      });
+    };
+
+    addBlock("游戏参与动机", data.motivation);
+    addBlock("付费动机", data.payment?.[3] ? [data.payment[3]] : []);
+    addBlock("动机说明", data.payment?.[4] ? [data.payment[4]] : []);
+
+    // 付费理解区：只展示前3个
+    const paymentList = data.payment || [];
+    const paymentTags = [];
+
+    if (paymentList[0]) paymentTags.push("付费模式: " + paymentList[0]);
+    if (paymentList[1]) paymentTags.push("付费点类型: " + paymentList[1]);
+    if (paymentList[2]) paymentTags.push("付费复杂度: " + paymentList[2]);
+
+    setTags(paymentTags, "paymentTags");
+
+  } else {
+    resultContainer.style.display = "block";
+    gameNameNode.innerText = input.value.trim();
+    setTags([], "contentTags");
+    setTags([], "userTags");
+    setTags([], "motivationTags");
+    setTags([], "paymentTags");
+  }
+});
+</script>
+</body>
+
+</html>
